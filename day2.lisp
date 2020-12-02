@@ -19,7 +19,7 @@
                     :char char
                     :data password))))
 
-(defparameter *input* (map-file "input/day2.txt" #'parse-password))
+(defparameter *input* (map-file #p"input/day2.txt" #'parse-password))
 
 (defun valid-count-occurrences (password)
   "Determine if the specified PASSWORD is valid according to Part 1."
@@ -29,8 +29,8 @@
 
 ;; Part 1: Determine how many passwords have occurrences of the character within
 ;;         the specified limit.
-(print (format t "Part 1: ~d passwords are valid"
-               (count-if #'valid-count-occurrences *input*)))
+(format t "Part 1: ~d passwords are valid~%"
+        (count-if #'valid-count-occurrences *input*))
 
 (defun char-at-index= (string index target)
   "Determine whether the character at the specified 1-based INDEX in the specified STRING is equal to the TARGET character."
@@ -45,5 +45,5 @@
 
 ;; Part 2: Determine how many passwords have occurrences of the character only
 ;;         at one of the specified indices.
-(print (format t "Part 2: ~d passwords are valid"
-               (count-if #'valid-index-occurrences *input*)))
+(format t "Part 2: ~d passwords are valid~%"
+        (count-if #'valid-index-occurrences *input*))

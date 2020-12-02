@@ -1,7 +1,7 @@
 (load "common.lisp")
 
 (defparameter *input* (make-hash-table))
-(map-file "input/day1.txt"
+(map-file #p"input/day1.txt"
           #'(lambda (v)
               (let ((int-v (nth-value 0 (parse-integer v))))
                 (setf (gethash int-v *input*) int-v))))
@@ -24,8 +24,8 @@
 (let* ((answer (two-sum 2020))
        (n1 (first answer))
        (n2 (second answer)))
-  (print (format t "Part 1: ~d * ~d = ~d" n1 n2 (* n1 n2))))
+  (format t "Part 1: ~d * ~d = ~d~%" n1 n2 (* n1 n2)))
 
 ;; Part 2: Find the product of three numbers whose sum is equal to 2020.
 (let ((answer (three-sum 2020)))
-  (print (format t "Part 2: ~{~d~^ * ~} = ~d" answer (reduce #'* answer))))
+  (format t "Part 2: ~{~d~^ * ~} = ~d~%" answer (reduce #'* answer)))
