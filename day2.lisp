@@ -1,5 +1,5 @@
 (load "common.lisp")
-(ql:quickload :cl-ppcre)
+(ql:quickload :cl-ppcre :silent t)
 
 (defstruct password
   "A representation of a password as specified in the input file."
