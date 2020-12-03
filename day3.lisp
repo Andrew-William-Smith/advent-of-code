@@ -12,15 +12,15 @@
    LINE (as in *INPUT*) is a tree.  Lines are treated as circular buffers, in
    which navigating off of the right side will result in wrapping around to the
    left.  Output is returned as a bit."
-  (elt line (mod pos (length line))))
+  (bit line (mod pos (length line))))
 
 (defun count-trees (lines x Δx Δy)
   "Count the trees encountered at a (ΔX, ΔY) path in the current list of LINES,
    with a current horizontal position X."
   (if lines
       ;; There are lines remaining, so traverse downward.
-      (let ((trees-below (count-trees (nthcdr Δy lines) (+ x Δx) Δx Δy)))
-        (+ (🎄 x (car lines)) trees-below))
+      (+ (🎄 x (car lines))
+         (count-trees (nthcdr Δy lines) (+ x Δx) Δx Δy))
       ;; No lines remaining, so there can be no more trees.
       0))
 
