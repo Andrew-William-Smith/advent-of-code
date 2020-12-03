@@ -1,18 +1,18 @@
 (load "common.lisp")
 
 (defun find-trees (line)
-  "Convert the specified LINE to a boolean list describing whether each space is
-   a tree (#)."
-  (map 'list #'(lambda (c) (char= c #\#)) line))
+  "Convert the specified LINE to a bit vector describing whether each space is a
+   tree (#)."
+  (map 'bit-vector #'(lambda (c) (boolean-to-bit (char= c #\#))) line))
 
 (defparameter *input* (map-file #p"input/day3.txt" #'find-trees))
 
-(defun treep (pos line)
+(defun 🎄 (pos line)
   "Determine whether the terrain item at the specified INDEX on the specified
    LINE (as in *INPUT*) is a tree.  Lines are treated as circular buffers, in
    which navigating off of the right side will result in wrapping around to the
-   left."
-  (nth (mod pos (length line)) line))
+   left.  Output is returned as a bit."
+  (elt line (mod pos (length line))))
 
 (defun count-trees (lines x Δx Δy)
   "Count the trees encountered at a (ΔX, ΔY) path in the current list of LINES,
@@ -20,9 +20,7 @@
   (if lines
       ;; There are lines remaining, so traverse downward.
       (let ((trees-below (count-trees (nthcdr Δy lines) (+ x Δx) Δx Δy)))
-        (if (treep x (car lines))
-            (1+ trees-below)
-            trees-below))
+        (+ (🎄 x (car lines)) trees-below))
       ;; No lines remaining, so there can be no more trees.
       0))
 

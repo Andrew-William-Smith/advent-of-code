@@ -9,6 +9,10 @@
   "Convert the specified single-character STRING to a CHARACTER."
   (coerce string 'character))
 
+(defun boolean-to-bit (boolean)
+  "Convert the specified BOOLEAN to a BIT (0 or 1)."
+  (if boolean 1 0))
+
 (defun neq (i1 i2)
   "Return whether I1 and I2 are not equal according to EQ."
   (not (eq i1 i2)))
