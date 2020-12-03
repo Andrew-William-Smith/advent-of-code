@@ -3,23 +3,23 @@
 (defun find-trees (line)
   "Convert the specified LINE to a bit vector describing whether each space is a
    tree (#)."
-  (map 'bit-vector #'(lambda (c) (boolean-to-bit (char= c #\#))) line))
+  (map-bit-vector [char= #\# %] line))
 
 (defparameter *input* (map-file #p"input/day3.txt" #'find-trees))
 
-(defun 🎄 (pos line)
+(defun 🎄 (line index)
   "Determine whether the terrain item at the specified INDEX on the specified
    LINE (as in *INPUT*) is a tree.  Lines are treated as circular buffers, in
    which navigating off of the right side will result in wrapping around to the
    left.  Output is returned as a bit."
-  (bit line (mod pos (length line))))
+  (bit line (mod index (length line))))
 
 (defun count-trees (lines x Δx Δy)
   "Count the trees encountered at a (ΔX, ΔY) path in the current list of LINES,
    with a current horizontal position X."
   (if lines
       ;; There are lines remaining, so traverse downward.
-      (+ (🎄 x (car lines))
+      (+ (🎄 (car lines) x)
          (count-trees (nthcdr Δy lines) (+ x Δx) Δx Δy))
       ;; No lines remaining, so there can be no more trees.
       0))

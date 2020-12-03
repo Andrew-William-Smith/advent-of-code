@@ -2,9 +2,8 @@
 
 (defparameter *input* (make-hash-table))
 (map-file #p"input/day1.txt"
-          #'(lambda (v)
-              (let ((int-v (nth-value 0 (parse-integer v))))
-                (setf (gethash int-v *input*) int-v))))
+          [let ((int% (nth-value 0 (parse-integer %))))
+            (setf (gethash int% *input*) int%)])
 
 (defun two-sum (target)
   "Find the two numbers in *INPUT* whose sum is equal to TARGET."
