@@ -1,11 +1,10 @@
 (load "common.lisp")
 
-(defun find-trees (line)
-  "Convert the specified LINE to a bit vector describing whether each space is a
-   tree (#)."
-  (map-bit-vector [char= #\# %] line))
-
-(defparameter *input* (map-file #p"input/day3.txt" #'find-trees))
+;; Convert each line of the input to a bit vector describing whether each
+;; terrain item is a tree.  Made incredibly concise courtesy of my new nested
+;; shorthand lambdas!
+(defparameter *input*
+  (map-file #p"input/day3.txt" [map-bit-vector [char= #\# %] %]))
 
 (defun 🎄 (line index)
   "Determine whether the terrain item at the specified INDEX on the specified
