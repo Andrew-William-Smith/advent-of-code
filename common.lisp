@@ -23,19 +23,24 @@
    be automatically assigned as those that follow the last positional argument.
    If only a % appears, then it will be assumed to refer to a single positional
    argument.  If the body consists of multiple sexps, they will be surrounded by
-   an implicit PROGN."
+   an implicit PROGN.  Due to parameter name mangling, shorthand lambdas may be
+   nested, and each lambda's arguments will apply only within its immeidate
+   scope; please use this feature sparingly."
   (declare (ignore char))
   (let* ((sexp (read-delimited-list #\] stream t))
          (arg-count (count-positional-args sexp))
          (args (if (zerop arg-count)
-                   '(%)
+                   (list (cons '% (gensym)))
                    (loop for i from 1 to arg-count
-                         collect (intern (format nil "%~d" i))))))
-    `(lambda (&optional ,@args &rest %&)
-       (declare (ignorable ,@args %&))
-       ,(if (and (listp sexp) (listp (car sexp)))
-            (cons 'progn sexp)
-            sexp))))
+                         collect (cons (intern (format nil "%~d" i)) (gensym)))))
+         (arg-names (mapcar #'cdr args))
+         (rest-sym (gensym))
+         (mangled (sublis (cons (cons '%& rest-sym) args) sexp)))
+    `(lambda (&optional ,@arg-names &rest ,rest-sym)
+       (declare (ignorable ,@arg-names ,rest-sym))
+       ,(if (and (listp mangled) (listp (car mangled)))
+            (cons 'progn mangled)
+            mangled))))
 
 (set-macro-character #\[ #'|[-reader|)
 (set-macro-character #\] (get-macro-character #\)))
