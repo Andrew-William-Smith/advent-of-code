@@ -37,9 +37,9 @@
    The constraints are an alist with entries of the form (ACCESSOR . VALIDATOR),
    where VALIDATOR is a monadic lambda that returns whether the value returned
    from the ACCESSOR is valid."
-  (every #'identity
-         (map 'list [when-let ((field-value (funcall (car %) passport)))
-                      (funcall (cdr %) field-value)] fields)))
+  (loop for (accessor . validator) in fields
+     for field-value = (funcall accessor passport)
+     always (and field-value (funcall validator field-value))))
 
 (defun tolerant-in-range (min value max)
   "Return whether the specified string VALUE is within the range [MIN, MAX].
