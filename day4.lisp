@@ -49,30 +49,26 @@
            (= length (length value)))
        (<= min (parse-integer value :junk-allowed t) max)))
 
+(defparameter *fields*
+  `((passport-byr . ,[tolerant-in-range 1920 % 2002 :length 4])
+    (passport-iyr . ,[tolerant-in-range 2010 % 2020 :length 4])
+    (passport-eyr . ,[tolerant-in-range 2020 % 2030 :length 4])
+    (passport-hgt
+     . ,[cond
+          ((str:ends-with-p "cm" %) (tolerant-in-range 150 % 193 :length 5))
+          ((str:ends-with-p "in" %) (tolerant-in-range 59 % 76 :length 4))
+          (t nil)])
+    (passport-hcl . ,[cl-ppcre:scan "^\\#[0-9a-f]{6}$" %])
+    (passport-ecl . ,[cl-ppcre:scan "^(amb|blu|brn|gry|grn|hzl|oth)$" %])
+    (passport-pid . ,[cl-ppcre:scan "^\\d{9}$" %])))
+
 ;; Part 1: Determine the number of valid passports in the input.  A passport is
 ;;         considered valid if all of its fields other than CID are defined.
-(defparameter *identity-fields*
-  (map 'list [cons % #'identity]
-       '(passport-byr passport-iyr passport-eyr passport-hgt passport-hcl
-         passport-ecl passport-pid)))
-
-(format t "Part 1: ~d valid passports~%"
-        (count-if [passport-validp % *identity-fields*] *input*))
+(let ((identity-fields (mapcar [cons (car %) #'identity] *fields*)))
+  (format t "Part 1: ~d valid passports~%"
+          (count-if [passport-validp % identity-fields] *input*)))
 
 ;; Part 2: Determine the number of valid passports in the input.  A passport is
 ;;         considered valid if its validator returns true.
-(defparameter *validate-fields*
-  (list (cons #'passport-byr [tolerant-in-range 1920 % 2002 :length 4])
-        (cons #'passport-iyr [tolerant-in-range 2010 % 2020 :length 4])
-        (cons #'passport-eyr [tolerant-in-range 2020 % 2030 :length 4])
-        (cons #'passport-hgt
-              [cond
-                ((str:ends-with-p "cm" %) (tolerant-in-range 150 % 193 :length 5))
-                ((str:ends-with-p "in" %) (tolerant-in-range 59 % 76 :length 4))
-                (t nil)])
-        (cons #'passport-hcl [cl-ppcre:scan "^\\#[0-9a-f]{6}$" %])
-        (cons #'passport-ecl [cl-ppcre:scan "^(amb|blu|brn|gry|grn|hzl|oth)$" %])
-        (cons #'passport-pid [cl-ppcre:scan "^\\d{9}$" %])))
-
 (format t "Part 2: ~d valid passports~%"
-        (count-if [passport-validp % *validate-fields*] *input*))
+        (count-if [passport-validp % *fields*] *input*))
