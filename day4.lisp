@@ -41,10 +41,13 @@
      for field-value = (funcall accessor passport)
      always (and field-value (funcall validator field-value))))
 
-(defun tolerant-in-range (min value max)
+(defun tolerant-in-range (min value max &key length)
   "Return whether the specified string VALUE is within the range [MIN, MAX].
-   Non-digit characters may appear in the VALUE and will be ignored."
-  (<= min (parse-integer value :junk-allowed t) max))
+   Non-digit characters may appear in the VALUE and will be ignored.  If specified,
+   also validates that the VALUE is of the specified LENGTH."
+  (and (or (not length)
+           (= length (length value)))
+       (<= min (parse-integer value :junk-allowed t) max)))
 
 ;; Part 1: Determine the number of valid passports in the input.  A passport is
 ;;         considered valid if all of its fields other than CID are defined.
@@ -59,13 +62,13 @@
 ;; Part 2: Determine the number of valid passports in the input.  A passport is
 ;;         considered valid if its validator returns true.
 (defparameter *validate-fields*
-  (list (cons #'passport-byr [tolerant-in-range 1920 % 2002])
-        (cons #'passport-iyr [tolerant-in-range 2010 % 2020])
-        (cons #'passport-eyr [tolerant-in-range 2020 % 2030])
+  (list (cons #'passport-byr [tolerant-in-range 1920 % 2002 :length 4])
+        (cons #'passport-iyr [tolerant-in-range 2010 % 2020 :length 4])
+        (cons #'passport-eyr [tolerant-in-range 2020 % 2030 :length 4])
         (cons #'passport-hgt
               [cond
-                ((str:ends-with-p "cm" %) (tolerant-in-range 150 % 193))
-                ((str:ends-with-p "in" %) (tolerant-in-range 59 % 76))
+                ((str:ends-with-p "cm" %) (tolerant-in-range 150 % 193 :length 5))
+                ((str:ends-with-p "in" %) (tolerant-in-range 59 % 76 :length 4))
                 (t nil)])
         (cons #'passport-hcl [cl-ppcre:scan "^\\#[0-9a-f]{6}$" %])
         (cons #'passport-ecl [cl-ppcre:scan "^(amb|blu|brn|gry|grn|hzl|oth)$" %])
