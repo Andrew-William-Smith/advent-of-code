@@ -30,6 +30,8 @@
   ;;         that some seats at the front or back of the plane may be missing.
   ;;         We use the property that the difference between the sum of all
   ;;         occupied seat ID's and the sum of the sequence from the minimum to
-  ;;         the maximum seat ID should be the ID of my seat.
-  (format t "Part 2: ~d~%"
-          (- (loop for i from min-id to max-id sum i) id-total)))
+  ;;         the maximum seat ID should be the ID of my seat.  The sum of the
+  ;;         sequence is computed using the standard arithmetic series summation
+  ;;         n * (a1 + a2) / 2.
+  (let ((series-sum (/ (* (1+ (- max-id min-id)) (+ min-id max-id)) 2)))
+    (format t "Part 2: ~d~%" (- series-sum id-total))))
