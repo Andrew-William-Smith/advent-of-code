@@ -70,16 +70,16 @@
     ;; If we have already visited this bag, return its containment count.
     ((node-visited bag) (node-auxiliary bag))
     ;; If the bag has no neighbours, it cannot contain any bags.
-    ((null (node-adjacent bag)) (visit-bag bag 1))
+    ((null (node-adjacent bag)) (visit-bag bag 0))
     ;; This bag has neighbours, so add up all of their containment counts.
     ;; We include the current bag in the count as well to simplify computations.
     (t (loop for edge in (node-adjacent bag)
              for weight = (edge-weight edge)
              for destination = (gethash (edge-destination edge) *input*)
-             sum (* weight (num-bags-contained destination)) into total
-             finally (return (visit-bag bag (1+ total)))))))
+             sum (* weight (1+ (num-bags-contained destination))) into total
+             finally (return (visit-bag bag total))))))
 
 ;; Part 2: Determine the number of bags that a shiny gold bag can contain.
 (reset-bags)
 (format t "Part 2: ~d total bags~%"
-        (1- (num-bags-contained (gethash "shiny gold" *input*))))
+        (num-bags-contained (gethash "shiny gold" *input*)))
