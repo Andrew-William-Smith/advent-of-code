@@ -4,7 +4,7 @@
 (use-package :alexandria)
 
 (defclass instruction ()
-  ((opcode :accessor ins-op    :initform 'nop :type symbol  :initarg :op)
+  ((opcode :accessor ins-op    :initform :nop :type keyword :initarg :op)
    (arg    :accessor ins-arg   :initform 0    :type integer :initarg :arg)
    (count  :accessor ins-count :initform 0    :type integer))
   (:documentation "An instruction executable by the virtual machine."))
@@ -15,7 +15,7 @@
   (destructuring-bind (op-name arg-str)
       (str:split " " asm)
     (make-instance 'instruction
-                   :op (intern (str:upcase op-name))
+                   :op (make-keyword (str:upcase op-name))
                    :arg (parse-integer arg-str))))
 
 (defmethod print-object ((this instruction) out)
@@ -61,9 +61,9 @@
     (incf (ins-count ins))
     ;; As is tradition for emulators/VM's, here's the giant switch-case.
     (switch ((ins-op ins))
-      ('nop nil)
-      ('jmp (incf (vm-rip this) (1- arg)))
-      ('acc (incf (vm-ra this) arg)))))
+            (:nop nil)
+            (:jmp (incf (vm-rip this) (1- arg)))
+            (:acc (incf (vm-ra this) arg)))))
 
 (defmethod execute-program ((this vm) &key cycles)
   "Execute the program in THIS virtual machine until termination.  Returns the
@@ -89,8 +89,8 @@
    return the value in the accumulator; otherwise return NIL."
   (let ((original-op (ins-op ins)))
     ;; Swap the instruction for the opposite.
-    (when (eq 'nop original-op) (setf (ins-op ins) 'jmp))
-    (when (eq 'jmp original-op) (setf (ins-op ins) 'nop))
+    (when (eq :nop original-op) (setf (ins-op ins) :jmp))
+    (when (eq :jmp original-op) (setf (ins-op ins) :nop))
     ;; Run the program and determine if it reached the end.
     (execute-program *vm* :cycles 1)
     (setf (ins-op ins) original-op)
@@ -105,7 +105,7 @@
 ;;         worth attempting too many optimisations.
 (solution "Part 2: A = ~d~%"
           (loop for ins across (vm-program *vm*)
-                for op = (ins-op ins)
-                when (member op '(nop jmp))
-                  do (when-let ((new-ra (swap-instruction ins)))
-                       (return new-ra))))
+             for op = (ins-op ins)
+             when (member op '(:nop :jmp))
+             do (when-let ((new-ra (swap-instruction ins)))
+                  (return new-ra))))
