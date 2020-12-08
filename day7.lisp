@@ -59,9 +59,9 @@
 
 ;; Part 1: Determine the number of colours that can be the outer layer of a
 ;;         series of bags with a shiny gold bag as the innermost layer.
-(format t "Part 1: ~d outer layers~%"
-        (loop for bag being the hash-values of *input*
-              count (contains-shiny-gold bag)))
+(solution "Part 1: ~d outer layers~%"
+          (loop for bag being the hash-values of *input*
+                count (contains-shiny-gold bag)))
 
 (defun num-bags-contained (bag)
   "Determine the total number of bags that the specified BAG can contain,
@@ -81,5 +81,5 @@
 
 ;; Part 2: Determine the number of bags that a shiny gold bag can contain.
 (reset-bags)
-(format t "Part 2: ~d total bags~%"
-        (num-bags-contained (gethash "shiny gold" *input*)))
+(solution "Part 2: ~d total bags~%"
+          (num-bags-contained (gethash "shiny gold" *input*)))

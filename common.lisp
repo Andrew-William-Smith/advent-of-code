@@ -46,7 +46,12 @@
 (set-macro-character #\] (get-macro-character #\)))
 
 
-;;; UTILITY FUNCTIONS
+;;; UTILITY FUNCTIONS AND MACROS
+
+(defmacro solution (format &rest values)
+  "Print the VALUES as the solution to a problem, formatted according to the
+   specified FORMAT string.  An execution time report will also be printed."
+  `(time (format t ,format ,@values)))
 
 (defun map-file (filename transform)
   "Apply the specified TRANSFORM function to all lines in the specified FILENAME."
