@@ -71,10 +71,10 @@
    once an instruction has been run CYCLES times."
   (reset-vm this)
   (loop while (and (< (vm-rip this) (length (vm-program this)))
-                   (and cycles
-                        (< (ins-count (next-instruction this)) cycles)))
-        do (execute-next this)
-        finally (return (vm-ra this))))
+                   (or (null cycles)
+                       (< (ins-count (next-instruction this)) cycles)))
+     do (execute-next this)
+     finally (return (vm-ra this))))
 
 ;; Initialise the VM from the assembly file.
 (defparameter *vm* (make-vm (map-file #p"input/day8.txt" #'identity)))
