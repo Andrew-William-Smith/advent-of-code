@@ -1,30 +1,32 @@
-(load "common.lisp")
+(in-package #:advent-of-code)
 
-(defparameter *input* (make-hash-table))
-(map-file #p"input/day1.txt"
-          [let ((int% (nth-value 0 (parse-integer %))))
-            (setf (gethash int% *input*) int%)])
-
-(defun two-sum (target)
-  "Find the two numbers in *INPUT* whose sum is equal to TARGET."
-  (loop for num being the hash-keys in *input*
+(defun two-sum (hashtbl target)
+  "Find the two numbers in HASHTBL whose sum is equal to TARGET."
+  (loop for num being the hash-keys in hashtbl
         for complement = (- target num)
-        when (gethash complement *input*)
+        when (gethash complement hashtbl)
           return (list num complement)))
 
-(defun three-sum (target)
-  "Find the three numbers in *INPUT* whose sum is equal to TARGET."
-  (loop for num being the hash-keys in *input*
-        for remainder = (two-sum (- target num))
+(defun three-sum (hashtbl target)
+  "Find the three numbers in HASHTBL whose sum is equal to TARGET."
+  (loop for num being the hash-keys in hashtbl
+        for remainder = (two-sum hashtbl (- target num))
         when remainder
           return (cons num remainder)))
 
-;; Part 1: Find the product of two numbers whose sum is equal to 2020.
-(let* ((answer (two-sum 2020))
-       (n1 (first answer))
-       (n2 (second answer)))
-  (format t "Part 1: ~d * ~d = ~d~%" n1 n2 (* n1 n2)))
+(defun day1/parse (filename)
+  (let ((input (make-hash-table)))
+    (map-file filename
+              [let ((int% (nth-value 0 (parse-integer %))))
+                (setf (gethash int% input) int%)])
+    input))
 
-;; Part 2: Find the product of three numbers whose sum is equal to 2020.
-(let ((answer (three-sum 2020)))
-  (format t "Part 2: ~{~d~^ * ~} = ~d~%" answer (reduce #'* answer)))
+(defparameter *input* (day1/parse #p"input/day1.txt"))
+
+(define-solution 1 1 (input) (*input*)
+  "Find the product of two numbers whose sum is equal to 2020."
+  (reduce #'* (two-sum input 2020)))
+
+(define-solution 1 2 (input) (*input*)
+  "Find the product of three numbers whose sum is equal to 2020."
+  (reduce #'* (three-sum input 2020)))

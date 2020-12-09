@@ -1,3 +1,5 @@
+(in-package #:advent-of-code)
+
 ;;; READER MACROS
 
 (defun extract-positional-number (argument)
@@ -48,14 +50,27 @@
 
 ;;; UTILITY FUNCTIONS AND MACROS
 
-(defmacro solution (format &rest values)
-  "Print the VALUES as the solution to a problem, formatted according to the
-   specified FORMAT string.  An execution time report will also be printed."
-  `(time (format t ,format ,@values)))
+(defun create-day-identifier (day prefix part)
+  "Create a symbol of the form DAY{DAY}/{PREFIX}{PART}."
+  (intern (concatenate 'string
+                       "DAY" (write-to-string day)
+                       "/" prefix (write-to-string part))))
+
+(defmacro define-solution (day part lambda-list run-list &rest body)
+  (let ((general-name (create-day-identifier day "PART" part))
+        (run-name (create-day-identifier day "RUN" part)))
+    `(progn
+       (defun ,general-name ,lambda-list ,@body)
+       (defun ,run-name () (,general-name ,@run-list)))))
+
+(defun file-in-system (filename)
+  "Return the absolute path to FILENAME in the current system."
+  (merge-pathnames filename (asdf:system-source-directory :advent-of-code)))
 
 (defun map-file (filename transform)
   "Apply the specified TRANSFORM function to all lines in the specified FILENAME."
-  (with-open-file (in filename)
+  (with-open-file
+      (in (file-in-system filename))
     (loop for line = (read-line in nil nil)
           while line
           collect (funcall transform line))))
