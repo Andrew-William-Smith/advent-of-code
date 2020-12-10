@@ -7,9 +7,6 @@ jobs:
     name: Test all solutions
     runs-on: ubuntu-latest
     steps:
-      - name: Install sudo
-        run: |
-          apt update && apt install -y sudo
       - name: Install binary dependencies
         run: |
           sudo apt install -y sbcl
