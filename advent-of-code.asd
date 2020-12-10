@@ -8,7 +8,9 @@
                #:str)
   :components ((:file "package")
                (:file "common")
-               (:file "day1"))
+               (:file "day1")
+               (:file "day2")
+               (:file "day3"))
   :in-order-to ((test-op (test-op "advent-of-code/tests"))))
 
 (asdf:defsystem #:advent-of-code/tests
@@ -18,6 +20,8 @@
                 :serial t
                 :components ((:file "package")
                              (:file "main")
-                             (:file "test-day1"))))
+                             (:file "test-day1")
+                             (:file "test-day2")
+                             (:file "test-day3"))))
   :perform (test-op (o s) (uiop:symbol-call
                            :advent-of-code-tests :test-all)))

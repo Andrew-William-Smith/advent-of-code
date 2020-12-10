@@ -10,8 +10,8 @@
                        "DAY" (write-to-string day)
                        "/" suffix)))
 
-(defparameter *max-day* 1)
-(loop for i from 1 to 1
+(defparameter *max-day* 3)
+(loop for i from 1 to *max-day*
       do (export (map 'list
                       (lambda (s) (daysym i s))
                       '("PARSE" "PART1" "PART2" "RUN1" "RUN2"))))

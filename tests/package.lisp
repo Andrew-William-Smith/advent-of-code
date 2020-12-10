@@ -3,4 +3,6 @@
   (:export #:run!
            #:all-tests
            #:test-all
-           #:day1-tests))
+           #:day1-tests
+           #:day2-tests
+           #:day3-tests))

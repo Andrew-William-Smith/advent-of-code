@@ -69,8 +69,7 @@
 
 (defun map-file (filename transform)
   "Apply the specified TRANSFORM function to all lines in the specified FILENAME."
-  (with-open-file
-      (in (file-in-system filename))
+  (with-open-file (in (file-in-system filename))
     (loop for line = (read-line in nil nil)
           while line
           collect (funcall transform line))))
@@ -85,7 +84,7 @@
 
 (defun map-bit-vector (predicate seq)
   "Map the specified sequence SEQ to a BIT-VECTOR using the specified PREDICATE to determine the value of each bit."
-  (map 'bit-vector [boolean-to-bit (funcall predicate %)] seq))
+  (map 'bit-vector (lambda (b) (boolean-to-bit (funcall predicate b))) seq))
 
 (defun neq (i1 i2)
   "Return whether I1 and I2 are not equal according to EQ."

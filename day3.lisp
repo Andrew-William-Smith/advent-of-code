@@ -1,10 +1,12 @@
-(load "common.lisp")
+(in-package #:advent-of-code)
 
 ;; Convert each line of the input to a bit vector describing whether each
 ;; terrain item is a tree.  Made incredibly concise courtesy of my new nested
 ;; shorthand lambdas!
-(defparameter *input*
-  (map-file #p"input/day3.txt" [map-bit-vector [char= #\# %] %]))
+(defun day3/parse (filename)
+  (map-file filename [map-bit-vector [char= #\# %] %]))
+
+(defparameter *input* (day3/parse #p"input/day3.txt"))
 
 (defun 🎄 (line index)
   "Determine whether the terrain item at the specified INDEX on the specified
@@ -23,17 +25,15 @@
       ;; No lines remaining, so there can be no more trees.
       0))
 
-;; Part 1: Determine how many trees will be encountered on a (+3, +1) path from
-;;         the upper left-hand corner of the map, assuming that each line
-;;         repeats infinitely to the right.
-(format t "Part 1: ~d trees encountered~%" (count-trees *input* 0 3 1))
+(define-solution 3 1 (input) (*input*)
+  "Determine how many trees will be encountered on a (+3, +1) path from the
+   upper left-hand corner of the map, assuming that each line repeats
+   indefinitely to the right."
+  (count-trees input 0 3 1))
 
-;; Part 2: Determine the product of the numbers of trees encountered on the
-;;         specified paths from the upper left-hand corner of the map.
-(defparameter *paths* '((1 1) (3 1) (5 1) (7 1) (1 2)))
-
-(let ((tree-counts (loop for (Δx Δy) in *paths*
-                         collect (count-trees *input* 0 Δx Δy))))
-  (format t "Part 2: ~{~d~^ * ~} = ~d trees encountered~%"
-          tree-counts
-          (reduce #'* tree-counts)))
+(define-solution 3 2 (input) (*input*)
+  "Determine the product of the numbers of trees encountered on the specified
+   paths from the upper left-hand corner of the map."
+  (loop for (Δx Δy) in '((1 1) (3 1) (5 1) (7 1) (1 2))
+        collect (count-trees input 0 Δx Δy) into counts
+        finally (return (reduce #'* counts))))
