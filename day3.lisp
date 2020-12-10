@@ -6,8 +6,6 @@
 (defun day3/parse (filename)
   (map-file filename [map-bit-vector [char= #\# %] %]))
 
-(defparameter *input* (day3/parse #p"input/day3.txt"))
-
 (defun 🎄 (line index)
   "Determine whether the terrain item at the specified INDEX on the specified
    LINE (as in *INPUT*) is a tree.  Lines are treated as circular buffers, in
@@ -25,13 +23,13 @@
       ;; No lines remaining, so there can be no more trees.
       0))
 
-(define-solution 3 1 (input) (*input*)
+(define-solution 3 1 (input) ((day3/parse #p"input/day3.txt"))
   "Determine how many trees will be encountered on a (+3, +1) path from the
    upper left-hand corner of the map, assuming that each line repeats
    indefinitely to the right."
   (count-trees input 0 3 1))
 
-(define-solution 3 2 (input) (*input*)
+(define-solution 3 2 (input) ((day3/parse #p"input/day3.txt"))
   "Determine the product of the numbers of trees encountered on the specified
    paths from the upper left-hand corner of the map."
   (loop for (Δx Δy) in '((1 1) (3 1) (5 1) (7 1) (1 2))
