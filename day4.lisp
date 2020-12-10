@@ -1,9 +1,4 @@
-(load "common.lisp")
-(ql:quickload :alexandria :silent t)
-(ql:quickload :cl-ppcre :silent t)
-(ql:quickload :str :silent t)
-
-(use-package :alexandria)
+(in-package #:advent-of-code)
 
 (defstruct passport
   "A representation of a passport as per the problem description."
@@ -19,14 +14,14 @@
   "Parse an entire passport entry from the input stream IN."
   (when-let* ((entries (read-passport in))
               (parsed (make-passport)))
-    (loop for entry in entries
-          for (raw-field value) = (str:split ":" entry)
-          for field = (intern (str:upcase raw-field))
-          do (setf (slot-value parsed field) value))
-    parsed))
+             (loop for entry in entries
+                   for (raw-field value) = (str:split ":" entry)
+                   for field = (intern (str:upcase raw-field) :advent-of-code)
+                   do (setf (slot-value parsed field) value))
+             parsed))
 
-(defparameter *input*
-  (with-open-file (in #p"input/day4.txt")
+(defun day4/parse (filename)
+  (with-open-file (in (file-in-system filename))
     (loop for passport = (parse-passport in)
           while passport
           collect passport)))
@@ -38,13 +33,13 @@
    where VALIDATOR is a monadic lambda that returns whether the value returned
    from the ACCESSOR is valid."
   (loop for (accessor . validator) in fields
-     for field-value = (funcall accessor passport)
-     always (and field-value (funcall validator field-value))))
+        for field-value = (funcall accessor passport)
+        always (and field-value (funcall validator field-value))))
 
 (defun tolerant-in-range (min value max &key length)
   "Return whether the specified string VALUE is within the range [MIN, MAX].
-   Non-digit characters may appear in the VALUE and will be ignored.  If specified,
-   also validates that the VALUE is of the specified LENGTH."
+   Non-digit characters may appear in the VALUE and will be ignored.  If
+   specified,also validates that the VALUE is of the specified LENGTH."
   (and (or (not length)
            (= length (length value)))
        (<= min (parse-integer value :junk-allowed t) max)))
@@ -62,13 +57,13 @@
     (passport-ecl . ,[cl-ppcre:scan "^(amb|blu|brn|gry|grn|hzl|oth)$" %])
     (passport-pid . ,[cl-ppcre:scan "^\\d{9}$" %])))
 
-;; Part 1: Determine the number of valid passports in the input.  A passport is
-;;         considered valid if all of its fields other than CID are defined.
-(let ((identity-fields (mapcar [cons (car %) #'identity] *fields*)))
-  (format t "Part 1: ~d valid passports~%"
-          (count-if [passport-validp % identity-fields] *input*)))
+(define-solution 4 1 (input) ((day4/parse #p"input/day4.txt"))
+  "Determine the number of valid passports in the input.  A passport is
+   considered valid if all of its fields other than CID are defined."
+  (let ((identity-fields (mapcar [cons (car %) #'identity] *fields*)))
+    (count-if [passport-validp % identity-fields] input)))
 
-;; Part 2: Determine the number of valid passports in the input.  A passport is
-;;         considered valid if its validator returns true.
-(format t "Part 2: ~d valid passports~%"
-        (count-if [passport-validp % *fields*] *input*))
+(define-solution 4 2 (input) ((day4/parse #p"input/day4.txt"))
+  "Determine the number of valid passports in the input.  A passport is
+   considered valid if all of its field validators return true."
+  (count-if [passport-validp % *fields*] input))

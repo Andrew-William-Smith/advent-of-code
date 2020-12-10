@@ -1,4 +1,4 @@
-(load "common.lisp")
+(in-package #:advent-of-code)
 
 (defun parse-binary (spec one)
   "Parse the specified seat assignment SPEC to an integer, with the specified
@@ -13,25 +13,27 @@
    (parse-binary (subseq spec 7 10) #\R)))
 
 ;; Parse each line of the input to a (ROW . COLUMN) pair.
-(defparameter *input* (map-file #p"input/day5.txt" #'parse-seat))
+(defun day5/parse (filename)
+  (map-file filename #'parse-seat))
 
-(destructuring-bind (min-id max-id id-total)
-    (loop for seat in *input*
-          for id = (+ (* 8 (car seat)) (cdr seat))
-          minimize id into min
-          maximize id into max
-          sum id into total
-          finally (return (list min max total)))
+(define-solution 5 1 (input) ((day5/parse #p"input/day5.txt"))
+  "Determine the highest seat ID on any boarding pass."
+  (loop for seat in input
+        for id = (+ (* 8 (car seat)) (cdr seat))
+        maximize id))
 
-  ;; Part 1: Determine the highest seat ID on any boarding pass
-  (format t "Part 1: ~d~%" max-id)
-
-  ;; Part 2: Determine my seat, the only unoccupied seat on the plane knowing
-  ;;         that some seats at the front or back of the plane may be missing.
-  ;;         We use the property that the difference between the sum of all
-  ;;         occupied seat ID's and the sum of the sequence from the minimum to
-  ;;         the maximum seat ID should be the ID of my seat.  The sum of the
-  ;;         sequence is computed using the standard arithmetic series summation
-  ;;         n * (a1 + a2) / 2.
-  (let ((series-sum (/ (* (1+ (- max-id min-id)) (+ min-id max-id)) 2)))
-    (format t "Part 2: ~d~%" (- series-sum id-total))))
+(define-solution 5 2 (input) ((day5/parse #p"input/day5.txt"))
+  "Determine my seat, the only unoccupied seat on the plane knowing that some
+   seats at the front or back of the plane may be missing.  We use the property
+   that the difference between the sum of all occupied seat ID's and the sum of
+   the sequence from the minimum to the maximum seat ID should be the ID of my
+   seat.  The sum of the sequence is computed using the standard arithmetic
+   series summation, n * (a1 + a2) / 2."
+  (destructuring-bind (min-id max-id id-total)
+      (loop for seat in input
+            for id = (+ (* 8 (car seat)) (cdr seat))
+            minimize id into min
+            maximize id into max
+            sum id into total
+            finally (return (list min max total)))
+    (- (/ (* (1+ (- max-id min-id)) (+ min-id max-id)) 2) id-total)))

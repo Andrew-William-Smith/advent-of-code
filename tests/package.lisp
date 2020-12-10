@@ -5,4 +5,10 @@
            #:test-all
            #:day1-tests
            #:day2-tests
-           #:day3-tests))
+           #:day3-tests
+           #:day4-tests
+           #:day5-tests
+           #:day6-tests
+           #:day7-tests
+           #:day8-tests
+           #:day9-tests))

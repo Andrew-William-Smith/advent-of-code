@@ -8,5 +8,5 @@
 (test day3/part1-acceptance
       (is (= 7 (day3/part1 *day3/input*))))
 
-(test day3/part3-acceptance
+(test day3/part2-acceptance
       (is (= 336 (day3/part2 *day3/input*))))

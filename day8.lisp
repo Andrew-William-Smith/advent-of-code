@@ -1,7 +1,4 @@
-(load "common.lisp")
-(ql:quickload :alexandria :silent t)
-(ql:quickload :str :silent t)
-(use-package :alexandria)
+(in-package #:advent-of-code)
 
 (defclass instruction ()
   ((opcode :accessor ins-op    :initform :nop :type keyword :initarg :op)
@@ -73,17 +70,19 @@
   (loop while (and (< (vm-rip this) (length (vm-program this)))
                    (or (null cycles)
                        (< (ins-count (next-instruction this)) cycles)))
-     do (execute-next this)
-     finally (return (vm-ra this))))
+        do (execute-next this)
+        finally (return (vm-ra this))))
 
 ;; Initialise the VM from the assembly file.
-(defparameter *vm* (make-vm (map-file #p"input/day8.txt" #'identity)))
+(defun day8/parse (filename)
+  (make-vm (map-file filename #'identity)))
 
-;; Part 1: Determine the value of the accumulator immediately before any
-;;         instruction is run for a second time.
-(solution "Part 1: A = ~d~%" (execute-program *vm* :cycles 1))
+(define-solution 8 1 (vm) ((day8/parse #p"input/day8.txt"))
+  "Determine the value of the accumulator immediately before any instruction is
+   run for a second time."
+  (execute-program vm :cycles 1))
 
-(defun swap-instruction (ins)
+(defun swap-instruction (ins vm)
   "Swap the NOP or JMP instruction INS to the opposite instruction, then run the
    VM on the loaded program for a single loop cycle.  If the program terminates,
    return the value in the accumulator; otherwise return NIL."
@@ -92,20 +91,20 @@
     (when (eq :nop original-op) (setf (ins-op ins) :jmp))
     (when (eq :jmp original-op) (setf (ins-op ins) :nop))
     ;; Run the program and determine if it reached the end.
-    (execute-program *vm* :cycles 1)
+    (execute-program vm :cycles 1)
     (setf (ins-op ins) original-op)
-    (when (= (vm-rip *vm*) (length (vm-program *vm*)))
-      (vm-ra *vm*))))
+    (when (= (vm-rip vm) (length (vm-program vm)))
+      (vm-ra vm))))
 
-;; Part 2: Determine the value of the accumulator when the errant instruction is
-;;         repaired.  This is a NOP or JMP instruction that, when changed to the
-;;         other instruction with the same argument, will allow the program to
-;;         terminate.  I've stuck with a simple brute-force approach to this
-;;         problem, since the small size of the input means that it's not really
-;;         worth attempting too many optimisations.
-(solution "Part 2: A = ~d~%"
-          (loop for ins across (vm-program *vm*)
-             for op = (ins-op ins)
-             when (member op '(:nop :jmp))
-             do (when-let ((new-ra (swap-instruction ins)))
-                  (return new-ra))))
+(define-solution 8 2 (vm) ((day8/parse #p"input/day8.txt"))
+  "Determine the value of the accumulator when the errant instruction is
+   repaired.  This is a NOP or JMP instruction that, when changed to the other
+   instruction with the same argument, will allow the program to terminate.
+   I've stuck with a simple brute-force approach to this problem, since the
+   small size of the input means that it's not really worth attempting too many
+   optimisations."
+  (loop for ins across (vm-program vm)
+        for op = (ins-op ins)
+        when (member op '(:nop :jmp))
+          do (when-let ((new-ra (swap-instruction ins vm)))
+               (return new-ra))))

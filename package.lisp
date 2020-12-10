@@ -4,13 +4,14 @@
 
 (in-package :advent-of-code)
 
+(defparameter *max-day* 9)
+
 (defun daysym (day suffix)
   "Create a symbol of the form DAY{DAY}/{SUFFIX}."
   (intern (concatenate 'string
                        "DAY" (write-to-string day)
                        "/" suffix)))
 
-(defparameter *max-day* 3)
 (loop for i from 1 to *max-day*
       do (export (map 'list
                       (lambda (s) (daysym i s))
