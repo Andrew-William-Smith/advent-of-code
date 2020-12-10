@@ -1,0 +1,32 @@
+name: Advent of Code CI
+
+on: push
+
+jobs:
+  test:
+    name: Test all solutions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sudo
+        run: |
+          apt update && apt install -y sudo
+      - name: Install binary dependencies
+        run: |
+          sudo apt install -y sbcl
+      - name: Install quicklisp
+        run: |
+          curl -O https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path "./quicklisp")' --non-interactive
+          cat <<EOF >> $HOME/.sbclrc
+          #-quicklisp
+          (let ((quicklisp-init "quicklisp/setup.lisp"))
+            (when (probe-file quicklisp-init)
+              (load quicklisp-init)))
+          EOF
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: quicklisp/local-projects/advent-of-code
+      - name: Run acceptance tests
+        run: |
+          sbcl --load quicklisp/setup.lisp --load quicklisp/local-projects/advent-of-code/run-tests.lisp --non-interactive

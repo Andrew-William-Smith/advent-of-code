@@ -1,0 +1,5 @@
+(ql:quickload :advent-of-code)
+(ql:quickload :fiveam)
+(setf fiveam:*on-error* :debug)
+(setf fiveam:*on-failure* :debug)
+(asdf:test-system 'advent-of-code)
