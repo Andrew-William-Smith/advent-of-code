@@ -16,7 +16,8 @@
                (:file "day6")
                (:file "day7")
                (:file "day8")
-               (:file "day9"))
+               (:file "day9")
+               (:file "day10"))
   :in-order-to ((test-op (test-op "advent-of-code/tests"))))
 
 (asdf:defsystem #:advent-of-code/tests
@@ -34,6 +35,7 @@
                              (:file "test-day6")
                              (:file "test-day7")
                              (:file "test-day8")
-                             (:file "test-day9"))))
+                             (:file "test-day9")
+                             (:file "test-day10"))))
   :perform (test-op (o s) (uiop:symbol-call
                            :advent-of-code-tests :test-all)))

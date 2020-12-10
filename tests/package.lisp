@@ -11,4 +11,5 @@
            #:day6-tests
            #:day7-tests
            #:day8-tests
-           #:day9-tests))
+           #:day9-tests
+           #:day10-tests))
