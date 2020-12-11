@@ -14,12 +14,6 @@ jobs:
         run: |
           curl -O https://beta.quicklisp.org/quicklisp.lisp
           sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install :path "./quicklisp")' --non-interactive
-          cat <<EOF >> $HOME/.sbclrc
-          #-quicklisp
-          (let ((quicklisp-init "quicklisp/setup.lisp"))
-            (when (probe-file quicklisp-init)
-              (load quicklisp-init)))
-          EOF
       - name: Checkout
         uses: actions/checkout@v2
         with:
