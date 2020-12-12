@@ -9,20 +9,13 @@
       (#\S (cons :move (complex 0 (- argument))))
       (#\E (cons :move (complex argument)))
       (#\W (cons :move (complex (- argument))))
-      (#\L (cons :rotate (- argument)))
-      (#\R (cons :rotate argument))
+      ;; Multiplying by i rotates a complex coordinate 90 degrees to the left.
+      (#\L (cons :rotate (expt #C(0 1) (/ argument 90))))
+      (#\R (cons :rotate (expt #C(0 -1) (/ argument 90))))
       (#\F (cons :forward argument)))))
 
 (defun day12/parse (filename)
   (map-file filename #'parse-motion))
-
-(defun rotate-position (position θ)
-  "Rotate the specified POSITION by Θ degrees, returning the new position."
-  (let ((x (realpart position))
-        (y (imagpart position))
-        (rad (* pi (/ (mod θ 360) 180))))
-    (complex (+ (* x (cos rad)) (* y (sin rad)))
-             (- (* y (cos rad)) (* x (sin rad))))))
 
 (defun move-agents (ship waypoint move motion argument)
   "Move the WAYPOINT and SHIP coordinates according to the specified MOTION with
@@ -30,9 +23,9 @@
    MOVE function is returned.  Returns a cons cell containing the new positions
    of both agents."
   (switch (motion)
-    (:move (funcall move ship waypoint argument))
-    (:rotate (cons ship (rotate-position waypoint argument)))
-    (:forward (cons (+ ship (* waypoint argument)) waypoint))))
+          (:move (funcall move ship waypoint argument))
+          (:rotate (cons ship (* waypoint argument)))
+          (:forward (cons (+ ship (* waypoint argument)) waypoint))))
 
 (defun manhattan-distance (position)
   "Determine the Manhattan distance between the specified POSITION, a complex
