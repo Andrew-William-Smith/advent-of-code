@@ -22,10 +22,10 @@
    the specified ARGUMENT.  When a :MOVE command is executed, the result of the
    MOVE function is returned.  Returns a cons cell containing the new positions
    of both agents."
-  (switch (motion)
-          (:move (funcall move ship waypoint argument))
-          (:rotate (cons ship (* waypoint argument)))
-          (:forward (cons (+ ship (* waypoint argument)) waypoint))))
+  (eswitch (motion)
+    (:move (funcall move ship waypoint argument))
+    (:rotate (cons ship (* waypoint argument)))
+    (:forward (cons (+ ship (* waypoint argument)) waypoint))))
 
 (defun manhattan-distance (position)
   "Determine the Manhattan distance between the specified POSITION, a complex
