@@ -4,7 +4,7 @@
 
 (in-package :advent-of-code)
 
-(defparameter *max-day* 12)
+(defparameter *max-day* 13)
 
 (defun daysym (day suffix)
   "Create a symbol of the form DAY{DAY}/{SUFFIX}."
