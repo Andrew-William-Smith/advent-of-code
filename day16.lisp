@@ -85,22 +85,18 @@
    specified TICKETS.  Returns a list of cons cells containing the index of each
    ticket and that ticket's valid fields."
   (loop for i below (length (car tickets))
-        collect (cons i (loop for fld in fields
-                              when (field-is-candidate tickets i fld)
-                                collect fld))))
+        collect (cons i (remove-if-not [field-is-candidate tickets i %]
+                                       fields))))
 
 (defun remove-candidate (target candidates)
   "Remove the specified TARGET candidate from the specified list of CANDIDATES."
-  (loop for c in candidates
-        for (index . fields) = c
+  (loop for (index . fields) in candidates
         collect (cons index (remove target fields))))
 
 (defun map-fields (candidates &optional mappings)
   "Determine a unique list of field MAPPINGS amongst the specified list of
    CANDIDATES.  The mapping indices are parallel with the candidates list."
-  (let* ((current (car candidates))
-         (index (car current))
-         (fields (cdr current)))
+  (destructuring-bind (&optional index . fields) (car candidates)
     (cond
       ;; We have mapped all fields, so reverse the constructed list.
       ((emptyp candidates) (reverse mappings))
@@ -124,7 +120,6 @@
            (candidates (candidate-fields valid-tickets raw-fields))
            (sorted (sort candidates #'< :key #'length))
            (mappings (map-fields sorted)))
-      (reduce #'* (loop for m in mappings
-                        for (index . field) = m
+      (reduce #'* (loop for (index . field) in mappings
                         when (str:starts-with-p "departure" (field-name field))
                           collect (aref your-ticket index))))))
