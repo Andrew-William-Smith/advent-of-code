@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day14
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day14)
 
 (defun parse-command (line)
   "Parse the command described in the specified LINE of code to a directive of
@@ -13,7 +17,7 @@
           ("mem\\[(\\d+)\\] = (\\d+)" line)
         (list :assign address value))))
 
-(defun day14/parse (filename)
+(defun parse (filename)
   (map-file filename #'parse-command))
 
 (defun execute-command (command mask memory parse-mask assign)
@@ -53,10 +57,9 @@
     (setf (gethash address memory)
           (logior (logand value cancel) apply))))
 
-(define-solution 14 1 (input) ((day14/parse #p"input/day14.txt"))
-  (loop for v being the hash-values
-          of (execute-program input #'value-mask #'assign-value)
-        sum v))
+(define-solution 1 (input) ((parse #p"input/day14.txt"))
+  (reduce #'+ (hash-table-values
+               (execute-program input #'value-mask #'assign-value))))
 
 (defun address-mask (mask)
   "Generate a mask for a floating address from the specified MASK string.  In
@@ -90,7 +93,6 @@
         for apply in (cdr mask)
         do (setf (gethash (logior cancelled apply) memory) value)))
 
-(define-solution 14 2 (input) ((day14/parse #p"input/day14.txt"))
-  (loop for v being the hash-values
-          of (execute-program input #'address-mask #'assign-floating)
-        sum v))
+(define-solution 2 (input) ((parse #p"input/day14.txt"))
+  (reduce #'+ (hash-table-values
+               (execute-program input #'address-mask #'assign-floating))))

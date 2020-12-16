@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day12
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day12)
 
 (defun parse-motion (command)
   "Parse the specified motion COMMAND to a cons cell containing a motion keyword
@@ -14,7 +18,7 @@
       (#\R (cons :rotate (expt #C(0 -1) (/ argument 90))))
       (#\F (cons :forward argument)))))
 
-(defun day12/parse (filename)
+(defun parse (filename)
   (map-file filename #'parse-motion))
 
 (defun move-agents (ship waypoint move motion argument)
@@ -43,14 +47,14 @@
           then (move-agents ship way move motion arg)
         finally (return (manhattan-distance ship))))
 
-(define-solution 12 1 (input) ((day12/parse #p"input/day12.txt"))
+(define-solution 1 (input) ((parse #p"input/day12.txt"))
   "Determine the position of the ship after executing all of the INPUT commands,
    assuming that the commands act upon the ship directly and that the ship
    starts at the origin facing eastward.  Coordinates are represented using
    complex numbers throughout."
   (evade-storm input [cons (+ %1 %3) %2] 1))
 
-(define-solution 12 2 (input) ((day12/parse #p"input/day12.txt"))
+(define-solution 2 (input) ((parse #p"input/day12.txt"))
   "Determine the position of the ship after executing all of the INPUT commands.
    In this part of the problem, the commands act upon a waypoint positioned
    relative to the ship, save for :FORWARD, which moves the ship in the

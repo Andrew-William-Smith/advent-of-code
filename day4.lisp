@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day4
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day4)
 
 (defstruct passport
   "A representation of a passport as per the problem description."
@@ -14,13 +18,13 @@
   "Parse an entire passport entry from the input stream IN."
   (when-let* ((entries (read-passport in))
               (parsed (make-passport)))
-             (loop for entry in entries
-                   for (raw-field value) = (str:split ":" entry)
-                   for field = (intern (str:upcase raw-field) :advent-of-code)
-                   do (setf (slot-value parsed field) value))
-             parsed))
+    (loop for entry in entries
+          for (raw-field value) = (str:split ":" entry)
+          for field = (intern (str:upcase raw-field) :advent-of-code/day4)
+          do (setf (slot-value parsed field) value))
+    parsed))
 
-(defun day4/parse (filename)
+(defun parse (filename)
   (with-open-file (in (file-in-system filename))
     (loop for passport = (parse-passport in)
           while passport
@@ -57,13 +61,13 @@
     (passport-ecl . ,[cl-ppcre:scan "^(amb|blu|brn|gry|grn|hzl|oth)$" %])
     (passport-pid . ,[cl-ppcre:scan "^\\d{9}$" %])))
 
-(define-solution 4 1 (input) ((day4/parse #p"input/day4.txt"))
+(define-solution 1 (input) ((parse #p"input/day4.txt"))
   "Determine the number of valid passports in the input.  A passport is
    considered valid if all of its fields other than CID are defined."
   (let ((identity-fields (mapcar [cons (car %) #'identity] *fields*)))
     (count-if [passport-validp % identity-fields] input)))
 
-(define-solution 4 2 (input) ((day4/parse #p"input/day4.txt"))
+(define-solution 2 (input) ((parse #p"input/day4.txt"))
   "Determine the number of valid passports in the input.  A passport is
    considered valid if all of its field validators return true."
   (count-if [passport-validp % *fields*] input))

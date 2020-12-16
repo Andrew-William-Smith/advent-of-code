@@ -1,6 +1,10 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day10
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
 
-(defun day10/parse (filename)
+(in-package #:advent-of-code/day10)
+
+(defun parse (filename)
   (cons 0 (sort (map-file filename #'parse-integer) #'<)))
 
 (defun count-differences (adapters)
@@ -14,7 +18,7 @@
         count (= diff 3) into threes
         finally (return (values ones (1+ threes)))))
 
-(define-solution 10 1 (input) ((day10/parse #p"input/day10.txt"))
+(define-solution 1 (input) ((parse #p"input/day10.txt"))
   "Determine the product of the number of 1-jolt- and 3-jolt-difference adapters
    in the input list, including the outlet and phone."
   (multiple-value-bind (ones threes)
@@ -38,7 +42,7 @@
                sum (adapter-arrangements candidates target cache) into s
                finally (return (setf (gethash current cache) s)))))))
 
-(define-solution 10 2 (input) ((day10/parse #p"input/day10.txt"))
+(define-solution 2 (input) ((parse #p"input/day10.txt"))
   "Determine the number of adapter arrangements that can reach from the outlet
    to the phone."
   (let ((phone-joltage (+ 3 (apply #'max input))))

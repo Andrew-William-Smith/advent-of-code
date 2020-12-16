@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day8
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day8)
 
 (defclass instruction ()
   ((opcode :accessor ins-op    :initform :nop :type keyword :initarg :op)
@@ -74,10 +78,10 @@
         finally (return (vm-ra this))))
 
 ;; Initialise the VM from the assembly file.
-(defun day8/parse (filename)
+(defun parse (filename)
   (make-vm (map-file filename #'identity)))
 
-(define-solution 8 1 (vm) ((day8/parse #p"input/day8.txt"))
+(define-solution 1 (vm) ((parse #p"input/day8.txt"))
   "Determine the value of the accumulator immediately before any instruction is
    run for a second time."
   (execute-program vm :cycles 1))
@@ -96,7 +100,7 @@
     (when (= (vm-rip vm) (length (vm-program vm)))
       (vm-ra vm))))
 
-(define-solution 8 2 (vm) ((day8/parse #p"input/day8.txt"))
+(define-solution 2 (vm) ((parse #p"input/day8.txt"))
   "Determine the value of the accumulator when the errant instruction is
    repaired.  This is a NOP or JMP instruction that, when changed to the other
    instruction with the same argument, will allow the program to terminate.

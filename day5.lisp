@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day5
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day5)
 
 (defun parse-binary (spec one)
   "Parse the specified seat assignment SPEC to an integer, with the specified
@@ -13,16 +17,16 @@
    (parse-binary (subseq spec 7 10) #\R)))
 
 ;; Parse each line of the input to a (ROW . COLUMN) pair.
-(defun day5/parse (filename)
+(defun parse (filename)
   (map-file filename #'parse-seat))
 
-(define-solution 5 1 (input) ((day5/parse #p"input/day5.txt"))
+(define-solution 1 (input) ((parse #p"input/day5.txt"))
   "Determine the highest seat ID on any boarding pass."
   (loop for seat in input
         for id = (+ (* 8 (car seat)) (cdr seat))
         maximize id))
 
-(define-solution 5 2 (input) ((day5/parse #p"input/day5.txt"))
+(define-solution 2 (input) ((parse #p"input/day5.txt"))
   "Determine my seat, the only unoccupied seat on the plane knowing that some
    seats at the front or back of the plane may be missing.  We use the property
    that the difference between the sum of all occupied seat ID's and the sum of

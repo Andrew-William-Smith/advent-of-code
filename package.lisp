@@ -1,18 +1,20 @@
-(defpackage #:advent-of-code
-  (:use #:cl #:alexandria)
-  (:export ()))
+(uiop:define-package #:advent-of-code/package
+    (:use #:cl)
+  (:nicknames #:advent-of-code)
+  (:reexport #:advent-of-code/day1
+             #:advent-of-code/day2
+             #:advent-of-code/day3
+             #:advent-of-code/day4
+             #:advent-of-code/day5
+             #:advent-of-code/day6
+             #:advent-of-code/day7
+             #:advent-of-code/day8
+             #:advent-of-code/day9
+             #:advent-of-code/day10
+             #:advent-of-code/day11
+             #:advent-of-code/day12
+             #:advent-of-code/day13
+             #:advent-of-code/day14
+             #:advent-of-code/day15))
 
-(in-package :advent-of-code)
-
-(defparameter *max-day* 14)
-
-(defun daysym (day suffix)
-  "Create a symbol of the form DAY{DAY}/{SUFFIX}."
-  (intern (concatenate 'string
-                       "DAY" (write-to-string day)
-                       "/" suffix)))
-
-(loop for i from 1 to *max-day*
-      do (export (map 'list
-                      (lambda (s) (daysym i s))
-                      '("PARSE" "PART1" "PART2" "RUN1" "RUN2"))))
+(in-package #:advent-of-code)

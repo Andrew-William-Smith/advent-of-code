@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day6
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day6)
 
 (defun parse-group (in)
   "Parse a single group definition from the input file handled by the stream IN.
@@ -9,20 +13,20 @@
     (when (> (length next-line) 0)
       (cons (coerce next-line 'list) (parse-group in)))))
 
-(defun day6/parse (filename)
+(defun parse (filename)
   (with-open-file (in (file-in-system filename))
     (loop for group = (parse-group in)
           while group
           collect group)))
 
-(define-solution 6 1 (input) ((day6/parse #p"input/day6.txt"))
+(define-solution 1 (input) ((parse #p"input/day6.txt"))
   "Determine the sum of the total number of questions responded to in the
    affirmative amongst all groups."
   (loop for group in input
         for total-questions = (reduce #'union group)
         sum (length total-questions)))
 
-(define-solution 6 2 (input) ((day6/parse #p"input/day6.txt"))
+(define-solution 2 (input) ((parse #p"input/day6.txt"))
   "Determine the sum of the number of questions for which everyone responded in
    the affirmative in each group."
   (loop for group in input

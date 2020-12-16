@@ -1,6 +1,10 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day9
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
 
-(defun day9/parse (filename)
+(in-package #:advent-of-code/day9)
+
+(defun parse (filename)
   (map-file filename #'parse-integer))
 
 (defun find-two-sum (seq target)
@@ -20,7 +24,7 @@
              ;; Advance both head and tail to form the new window.
              (cons (cdar window) (cddr window))))
 
-(define-solution 9 1 (input preamble-length) ((day9/parse #p"input/day9.txt") 25)
+(define-solution 1 (input preamble-length) ((parse #p"input/day9.txt") 25)
   "Determine the first number in the INPUT list that does not satisfy the XMAS
    encoding invariant, which is that two of the past PREAMBLE-LENGTH numbers add
    up to the number.  Note that the sliding windows in this problem are
@@ -40,10 +44,9 @@
     ((> target 0) (subseq-sum seq (cdr end) (1+ length) (- target (car end))))
     ((< target 0) (subseq-sum (cdr seq) end (1- length) (+ target (car seq))))))
 
-(define-solution 9 2 (input preamble-length) ((day9/parse #p"input/day9.txt") 25)
+(define-solution 2 (input preamble-length) ((parse #p"input/day9.txt") 25)
   "Determine the encryption weakness of this XMAS cipher, the sum of the
    smallest and largest values in the subset of the input that adds up to the
    invalid value computed in Part 1."
-  (let ((target-seq (subseq-sum input input 0
-                                (day9/part1 input preamble-length))))
+  (let ((target-seq (subseq-sum input input 0 (part1 input preamble-length))))
     (+ (apply #'min target-seq) (apply #'max target-seq))))

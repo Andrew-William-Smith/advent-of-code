@@ -1,6 +1,10 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day1
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
 
-(defun day1/parse (filename)
+(in-package #:advent-of-code/day1)
+
+(defun parse (filename)
   (let ((input (make-hash-table)))
     (map-file filename
               [let ((int% (nth-value 0 (parse-integer %))))
@@ -14,7 +18,7 @@
         when (gethash complement hashtbl)
           return (list num complement)))
 
-(define-solution 1 1 (input) ((day1/parse #p"input/day1.txt"))
+(define-solution 1 (input) ((parse #p"input/day1.txt"))
   "Find the product of two numbers whose sum is equal to 2020."
   (reduce #'* (two-sum input 2020)))
 
@@ -25,6 +29,6 @@
         when remainder
           return (cons num remainder)))
 
-(define-solution 1 2 (input) ((day1/parse #p"input/day1.txt"))
+(define-solution 2 (input) ((parse #p"input/day1.txt"))
   "Find the product of three numbers whose sum is equal to 2020."
   (reduce #'* (three-sum input 2020)))

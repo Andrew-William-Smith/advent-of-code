@@ -1,9 +1,13 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day3
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day3)
 
 ;; Convert each line of the input to a bit vector describing whether each
 ;; terrain item is a tree.  Made incredibly concise courtesy of my new nested
 ;; shorthand lambdas!
-(defun day3/parse (filename)
+(defun parse (filename)
   (map-file filename [map-bit-vector [char= #\# %] %]))
 
 (defun 🎄 (line index)
@@ -23,13 +27,13 @@
       ;; No lines remaining, so there can be no more trees.
       0))
 
-(define-solution 3 1 (input) ((day3/parse #p"input/day3.txt"))
+(define-solution 1 (input) ((parse #p"input/day3.txt"))
   "Determine how many trees will be encountered on a (+3, +1) path from the
    upper left-hand corner of the map, assuming that each line repeats
    indefinitely to the right."
   (count-trees input 0 3 1))
 
-(define-solution 3 2 (input) ((day3/parse #p"input/day3.txt"))
+(define-solution 2 (input) ((parse #p"input/day3.txt"))
   "Determine the product of the numbers of trees encountered on the specified
    paths from the upper left-hand corner of the map."
   (loop for (Δx Δy) in '((1 1) (3 1) (5 1) (7 1) (1 2))

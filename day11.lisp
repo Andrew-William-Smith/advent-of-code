@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day11
+    (:use #:cl #:alexandria #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day11)
 
 (defun parse-seats (line)
   "Parse the specified string LINE of seats into a list of grid cells, with an
@@ -10,7 +14,7 @@
                             (#\# :taken)] line)
                '(:floor)))
 
-(defun day11/parse (filename)
+(defun parse (filename)
   (let* ((seats (map-file filename #'parse-seats))
          (rows (+ 2 (length seats)))
          (cols (length (car seats)))
@@ -81,7 +85,7 @@
         sum (loop for c below (array-dimension seats 1)
                   count (eq :taken (aref seats r c)))))
 
-(define-solution 11 1 (input) ((day11/parse #p"input/day11.txt"))
+(define-solution 1 (input) ((parse #p"input/day11.txt"))
   "Count the number of occupied seats once the passenger automaton reaches its
    fixpoint beginning with the specified INPUT grid."
   (count-taken (seats-fixpoint input #'count-adjacent 4)))
@@ -108,7 +112,7 @@
         count (search-taken seats row col Δr Δc) into visible
         finally (return visible)))
 
-(define-solution 11 2 (input) ((day11/parse #p"input/day11.txt"))
+(define-solution 2 (input) ((parse #p"input/day11.txt"))
   "Count the number of occupied seats once the passenger automaton reaches its
    fixpoint beginning with the specified INPUT grid using the raycasting
    neighbour counting algorithm."

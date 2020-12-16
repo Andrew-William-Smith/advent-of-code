@@ -1,4 +1,8 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day7
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
+
+(in-package #:advent-of-code/day7)
 
 (defstruct node
   "A single node in the graph of bags."
@@ -22,7 +26,7 @@
     (setf (gethash source-colour graph)
           (make-node :name source-colour :adjacent contents))))
 
-(defun day7/parse (filename)
+(defun parse (filename)
   (let ((graph (make-hash-table :test #'equal)))
     (map-file filename [parse-bag graph %])
     graph))
@@ -57,7 +61,7 @@
                        (contains-shiny-gold (gethash destination graph) graph))
                 return (visit-bag bag t)))))
 
-(define-solution 7 1 (input) ((day7/parse #p"input/day7.txt"))
+(define-solution 1 (input) ((parse #p"input/day7.txt"))
   "Determine the number of colours that can be the outer layer of a series of
    bags with a shiny gold bag as the innermost layer."
   (reset-bags input)
@@ -80,7 +84,7 @@
              sum (* weight (1+ (num-bags-contained destination graph))) into total
              finally (return (visit-bag bag total))))))
 
-(define-solution 7 2 (input) ((day7/parse #p"input/day7.txt"))
+(define-solution 2 (input) ((parse #p"input/day7.txt"))
   "Determine the number of bags that a shiny gold bag can contain."
   (reset-bags input)
   (num-bags-contained (gethash "shiny gold" input) input))

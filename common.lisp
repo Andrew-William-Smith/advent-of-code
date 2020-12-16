@@ -1,4 +1,14 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/common
+    (:use #:cl)
+  (:export #:define-solution
+           #:file-in-system
+           #:map-file
+           #:string-to-char
+           #:boolean-to-bit
+           #:map-bit-vector
+           #:neq))
+
+(in-package #:advent-of-code/common)
 
 ;;; READER MACROS
 
@@ -32,12 +42,12 @@
   (let* ((sexp (read-delimited-list #\] stream t))
          (arg-count (count-positional-args sexp))
          (args (if (zerop arg-count)
-                   (list (cons '% (gensym)))
+                   (list (cons (intern "%") (gensym)))
                    (loop for i from 1 to arg-count
                          collect (cons (intern (format nil "%~d" i)) (gensym)))))
          (arg-names (mapcar #'cdr args))
          (rest-sym (gensym))
-         (mangled (sublis (cons (cons '%& rest-sym) args) sexp)))
+         (mangled (sublis (cons (cons (intern "%&") rest-sym) args) sexp)))
     `(lambda (&optional ,@arg-names &rest ,rest-sym)
        (declare (ignorable ,@arg-names ,rest-sym))
        ,(if (and (listp mangled) (listp (car mangled)))
@@ -50,15 +60,13 @@
 
 ;;; UTILITY FUNCTIONS AND MACROS
 
-(defun create-day-identifier (day prefix part)
-  "Create a symbol of the form DAY{DAY}/{PREFIX}{PART}."
-  (intern (concatenate 'string
-                       "DAY" (write-to-string day)
-                       "/" prefix (write-to-string part))))
+(defun create-part-identifier (prefix part)
+  "Create a symbol of the form {PREFIX}{PART}."
+  (intern (concatenate 'string prefix (write-to-string part))))
 
-(defmacro define-solution (day part lambda-list run-list &rest body)
-  (let ((general-name (create-day-identifier day "PART" part))
-        (run-name (create-day-identifier day "RUN" part)))
+(defmacro define-solution (part lambda-list run-list &rest body)
+  (let ((general-name (create-part-identifier "PART" part))
+        (run-name (create-part-identifier "RUN" part)))
     `(progn
        (defun ,general-name ,lambda-list ,@body)
        (defun ,run-name () (,general-name ,@run-list)))))

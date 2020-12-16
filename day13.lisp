@@ -1,6 +1,10 @@
-(in-package #:advent-of-code)
+(uiop:define-package #:advent-of-code/day13
+    (:use #:cl #:advent-of-code/common)
+  (:export #:parse #:part1 #:run1 #:part2 #:run2))
 
-(defun day13/parse (filename)
+(in-package #:advent-of-code/day13)
+
+(defun parse (filename)
   (with-open-file (in (file-in-system filename))
     (let ((departure (parse-integer (read-line in)))
           (schedule (map 'list [when (str:digitp %) (parse-integer %)]
@@ -24,7 +28,7 @@
       ((< this-wait min-wait) (next-bus departure (cdr schedule) this-wait this-bus))
       (t (next-bus departure (cdr schedule) min-wait best-bus)))))
 
-(define-solution 13 1 (input) ((day13/parse #p"input/day13.txt"))
+(define-solution 1 (input) ((parse #p"input/day13.txt"))
   "Determine the product of the ID and wait time for the next departure of the
    bus with the shortest wait time."
   (let* ((departure (car input))
@@ -48,7 +52,7 @@
         do (setf step (* step id))
         finally (return coincidence)))
 
-(define-solution 13 2 (input) ((day13/parse #p"input/day13.txt"))
+(define-solution 2 (input) ((parse #p"input/day13.txt"))
   "Determine the first time at which the buses at consecutive indices in the
    schedule will leave at consecutive times."
   (find-coincidence (loop for bus in (cdr input)

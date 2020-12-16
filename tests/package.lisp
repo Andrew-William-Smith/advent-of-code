@@ -1,19 +1,21 @@
-(defpackage #:advent-of-code-tests
-  (:use #:cl #:advent-of-code #:fiveam)
-  (:export #:run!
-           #:all-tests
-           #:test-all
-           #:day1-tests
-           #:day2-tests
-           #:day3-tests
-           #:day4-tests
-           #:day5-tests
-           #:day6-tests
-           #:day7-tests
-           #:day8-tests
-           #:day9-tests
-           #:day10-tests
-           #:day11-tests
-           #:day12-tests
-           #:day13-tests
-           #:day14-tests))
+(uiop:define-package #:advent-of-code/tests/package
+    (:use #:cl #:advent-of-code #:fiveam)
+  (:nicknames #:advent-of-code/tests)
+  (:use-reexport #:advent-of-code/tests/main)
+  (:reexport #:advent-of-code/tests/day1
+             #:advent-of-code/tests/day2
+             #:advent-of-code/tests/day3
+             #:advent-of-code/tests/day4
+             #:advent-of-code/tests/day5
+             #:advent-of-code/tests/day6
+             #:advent-of-code/tests/day7
+             #:advent-of-code/tests/day8
+             #:advent-of-code/tests/day9
+             #:advent-of-code/tests/day10
+             #:advent-of-code/tests/day11
+             #:advent-of-code/tests/day12
+             #:advent-of-code/tests/day13
+             #:advent-of-code/tests/day14
+             #:advent-of-code/tests/day15))
+
+(in-package #:advent-of-code/tests)
