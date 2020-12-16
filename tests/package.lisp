@@ -16,6 +16,7 @@
              #:advent-of-code/tests/day12
              #:advent-of-code/tests/day13
              #:advent-of-code/tests/day14
-             #:advent-of-code/tests/day15))
+             #:advent-of-code/tests/day15
+             #:advent-of-code/tests/day16))
 
 (in-package #:advent-of-code/tests)

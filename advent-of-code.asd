@@ -1,7 +1,7 @@
 (asdf:defsystem #:advent-of-code
   :description "Solutions to Advent of Code problems from various years."
   :author "Andrew Smith (Andrew-William-Smith)"
-  :license  "GNU GPLv3"
+  :license "GNU GPLv3"
   :serial t
   :class :package-inferred-system
   :defsystem-depends-on (#:asdf-package-system)
