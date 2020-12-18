@@ -9,8 +9,7 @@
    expression evaluator."
   (flet ((tokens-with-int ()
            (if (/= index int-start)
-               (cons (parse-integer (str:substring int-start index expr))
-                     tokens)
+               (cons (parse-integer expr :start int-start :end index) tokens)
                tokens))
          (next-char (new-tokens)
            (tokenise expr (1+ index) new-tokens (1+ index))))
@@ -20,6 +19,7 @@
           (#\Space (next-char (tokens-with-int)))
           (#\+ (next-char (cons :plus tokens)))
           (#\* (next-char (cons :times tokens)))
+          (#\🎄 (next-char (cons :tree tokens)))
           (#\( (next-char (cons :lparen tokens)))
           (#\) (next-char (cons :rparen (tokens-with-int))))
           (t (tokenise expr (1+ index) tokens int-start))))))
@@ -30,9 +30,12 @@
 (defun eval-operator (operator values)
   "Return the value pushed onto the stack of VALUES when the specified dyadic
    OPERATOR is affected upon it."
-  (eswitch (operator)
-    (:plus (+ (first values) (second values)))
-    (:times (* (first values) (second values)))))
+  (let ((op1 (first values))
+        (op2 (second values)))
+    (eswitch (operator)
+      (:plus (+ op1 op2))
+      (:times (* op1 op2))
+      (:tree (floor (+ op1 op2) 2)))))
 
 (defun eval-expression (expr operators &optional output op-stack)
   "Return the integer value to which the expression EXPR evaluates when computed
@@ -72,9 +75,13 @@
 (define-solution 1 (input) ((parse #p"input/day18.txt"))
   "Determine the sum of the values of all expressions in the input when
    evaluated with both operators having equal precedence."
-  (reduce #'+ (mapcar [eval-expression % '((:plus . 1) (:times . 1))] input)))
+  (reduce #'+ (mapcar
+               [eval-expression % '((:plus . 1) (:times . 1) (:tree . 3))]
+               input)))
 
 (define-solution 2 (input) ((parse #p"input/day18.txt"))
   "Determine the sum of the values of all expressions in the input when
    evaluated with addition having a higher precedence than multiplication."
-  (reduce #'+ (mapcar [eval-expression % '((:plus . 2) (:times . 1))] input)))
+  (reduce #'+ (mapcar
+               [eval-expression % '((:plus . 2) (:times . 1) (:tree . 3))]
+               input)))
