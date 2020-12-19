@@ -29,28 +29,40 @@
                   while line
                   collect line)))))
 
-(defun match (rules string &optional (rule 0) (index 0))
+(defun rhash (rule index)
+  "Create a simple hash value for the specified RULE number at the specified
+   INDEX in an input string.  Note that this function restricts the maximum
+   rule number to (2^16 - 1)."
+  (logior (ash index 16) rule))
+
+(defun match (rules string
+              &optional (cache (make-hash-table)) (rule 0) (index 0))
   "Determine the lengths of all prefixes of the specified STRING that match the
-   specified set of RULES."
+  specified set of RULES."
   (cond
     ;; We reached the end of a rule, so it matched in full.
     ((null rule) (list index))
     ;; We have reached the end of the string but not the rule, so no match.
     ((> index (length string)) nil)
     ;; Integers must reference other rules.
-    ((numberp rule) (match rules string (gethash rule rules) index))
+    ((numberp rule)
+     (multiple-value-bind (indices has-value) (gethash (rhash rule index) cache)
+       (if has-value
+           indices
+           (setf (gethash (rhash rule index) cache)
+                 (match rules string cache (gethash rule rules) index)))))
     ;; Strings must match in full to succeed.
     ((stringp rule)
      (when (equal rule (str:substring index (+ index (length rule)) string))
        (list (+ index (length rule)))))
     ;; Conjunctive rules must successfully match all terms.
-    ((and (listp rule) (> (+ index (length rule)) (length string))) nil)
-    ((and (listp rule) (atom (car rule)))
-     (loop for next in (match rules string (car rule) index)
-           append (match rules string (cdr rule) next)))
+    ((atom (car rule))
+     (when (<= (+ index (length rule)) (length string))
+       (loop for next in (match rules string cache (car rule) index)
+             append (match rules string cache (cdr rule) next))))
     ;; Disjunctive rules may match any term, but must match it in full.
     (t (loop for option in rule
-             append (match rules string option index)))))
+             append (match rules string cache option index)))))
 
 (defun full-match-p (rules string)
   "Determine whether the specified STRING can be fully matched by the specified
