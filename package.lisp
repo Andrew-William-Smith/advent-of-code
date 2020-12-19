@@ -18,6 +18,7 @@
              #:advent-of-code/day15
              #:advent-of-code/day16
              #:advent-of-code/day17
-             #:advent-of-code/day18))
+             #:advent-of-code/day18
+             #:advent-of-code/day19))
 
 (in-package #:advent-of-code)
